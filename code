@@ -1,0 +1,59 @@
+def deleteJWLock():
+    
+    import pymel.core as pm
+    
+    customLocators = pm.ls('JWLock*', type='transform')
+    
+    if len(customLocators) > 0:
+    
+        for eachJWLock in customLocators:
+                
+                pm.delete(eachJWLock)
+                print "You deleted", eachJWLock
+    
+    else:
+        
+        print "You don't have any JWlocks in the scene at the moment." 
+
+
+"""
+------------------------------------------------------------------------------------------------------------------------------------------
+"""
+
+
+def createJWLock():
+    #my seconds script of the 3rd of March 2018 done and another new years resolution completed - WOOOOOOP
+    #this script spawns a locator if a nurbsCurve is selected if give it the same transform values as its nurbs counter part
+
+    import maya.cmds as cmds;
+
+    #get what object I have selected in panel
+    selection = cmds.ls(selection=True)
+
+    # get the first object in the selection array
+    myObj = selection[0]
+
+    #you now want to get the shape of the object and store in varible 
+    checkShape = cmds.listRelatives(myObj, shapes=True, fullPath=True)[-1]
+    print checkShape
+    print cmds.objectType(checkShape)
+    #check if object type is a nurbsCurve shape
+    if cmds.objectType(checkShape, isType="nurbsCurve") == True:
+        print ("this is a nurbsCurve")
+        
+        #create a locator and give it the name Jonny
+        loc = cmds.spaceLocator(name="JWLock")[0] 
+        
+        #Parent the locator to the selected nurbsCurve
+        cmds.parent(loc, checkShape)
+        
+        #Zero out the translate rotate values
+        cmds.setAttr(loc+'.translate',0,0,0) 
+        cmds.setAttr(loc+'.rotate',0,0,0) 
+        cmds.setAttr(loc+'.scale',50,50,50) #set the scale of the locator 
+        cmds.color( loc, rgb=(1,1,0)) #give the locator the colour yellow
+        
+        #parent the locator to the world
+        cmds.parent(loc, world=True)
+    else:
+        print ("you selected a %s object, select a nurbsCurve") % (checkShape)	
